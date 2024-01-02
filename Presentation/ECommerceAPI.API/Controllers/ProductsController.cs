@@ -12,21 +12,27 @@ namespace ECommerceAPI.API.Controllers
     {
         readonly private IProductWriteRepository _productWriteRepository;
         readonly private IProductReadRepository _productReadRepository;
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
+
+        readonly private IOrderWriteRepository _orderWriteRepository;
+
+        readonly private ICustomerWriteRepository _customerWriteRepository;
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IOrderWriteRepository orderWriteRepository, ICustomerWriteRepository customerWriteRepository)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
+            _orderWriteRepository = orderWriteRepository;
+            _customerWriteRepository = customerWriteRepository;
         }
 
         [HttpGet]
         public async Task Get()
         {
-            await _productWriteRepository.AddRangeAsync(new()
-            {
-                new(){Id=Guid.NewGuid(),Name="Product 1",Price=100,CreatedDate=DateTime.UtcNow,Stock=10},
-                 new(){Id=Guid.NewGuid(),Name="Product 2",Price=200,CreatedDate=DateTime.UtcNow,Stock=20},
-                  new(){Id=Guid.NewGuid(),Name="Product 3",Price=300,CreatedDate=DateTime.UtcNow,Stock=30}
-            });
+            var customerId = Guid.NewGuid();
+            await _customerWriteRepository.AddAsync(new() { Id = customerId, Name = "Emre" });
+
+            await _orderWriteRepository.AddAsync(new() { Description = "Desc 1", Address = "Ankara - Cankaya", CustomerId = customerId });
+            await _orderWriteRepository.AddAsync(new() { Description = "Desc 2", Address = "Ankara - Mamak", CustomerId = customerId });
+
             await _productWriteRepository.SaveAsync();
         }
 
