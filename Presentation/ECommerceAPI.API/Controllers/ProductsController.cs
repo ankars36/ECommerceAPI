@@ -101,14 +101,14 @@ namespace ECommerceAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            var datas = await _storageService.UploadAsync("resources/product-images", Request.Form.Files);
-            await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
+            var datas = await _storageService.UploadAsync("files", Request.Form.Files);
+            await _fileWriteRepository.AddRangeAsync(datas.Select(d => new Domain.Entities.File()
             {
                 FileName = d.fileName,
                 Path = d.pathOrContainerName,
                 Storage = _storageService.StorageName
             }).ToList());
-            await _productImageFileWriteRepository.SaveAsync();
+            await _fileWriteRepository.SaveAsync();
 
             //var datas = await _fileService.UploadAsync("resources/invoices", Request.Form.Files);
             //await _invoiceFileWriteRepository.AddRangeAsync(datas.Select(d => new InvoiceFile()
