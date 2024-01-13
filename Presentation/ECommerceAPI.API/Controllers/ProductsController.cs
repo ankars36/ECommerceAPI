@@ -99,16 +99,20 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string id)
         {
-            var datas = await _storageService.UploadAsync("files", Request.Form.Files);
-            await _fileWriteRepository.AddRangeAsync(datas.Select(d => new Domain.Entities.File()
+            var datas = await _storageService.UploadAsync("product-images", Request.Form.Files);
+
+            Product product = await _productReadRepository.GetByIdAsync(id);
+
+            await _productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
             {
                 FileName = d.fileName,
                 Path = d.pathOrContainerName,
-                Storage = _storageService.StorageName
+                Storage = _storageService.StorageName,
+                Products = new List<Product> { product }
             }).ToList());
-            await _fileWriteRepository.SaveAsync();
+            await _productImageFileWriteRepository.SaveAsync();
 
             //var datas = await _fileService.UploadAsync("resources/invoices", Request.Form.Files);
             //await _invoiceFileWriteRepository.AddRangeAsync(datas.Select(d => new InvoiceFile()
