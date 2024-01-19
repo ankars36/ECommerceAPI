@@ -45,7 +45,7 @@ namespace ECommerceAPI.Application.Features.Commands.AppUser.GoogleLogin
                 user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
-                    user = new() { Id = Guid.NewGuid().ToString(), Email = payload.Email, UserName = payload.Email, NameSurname = payload.Email };
+                    user = new() { Id = Guid.NewGuid().ToString(), Email = payload.Email, UserName = payload.Email, NameSurname = payload.Name };
                     IdentityResult createResult = await _userManager.CreateAsync(user);
                     result = createResult.Succeeded;
                 }
