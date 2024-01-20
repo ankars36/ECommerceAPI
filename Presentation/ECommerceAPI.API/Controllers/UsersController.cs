@@ -22,17 +22,5 @@ namespace ECommerceAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserCommandRequest createUserCommandRequest)
         => Ok(await _mediator.Send(createUserCommandRequest));
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> LoginUser(LoginUserCommandRequest loginUserCommandRequest)
-        => Ok(await _mediator.Send(loginUserCommandRequest));
-
-        [HttpPost("google-login")]
-        public async Task<IActionResult> GoogleLogin(GoogleLoginCommandRequest googleLoginCommandRequest)
-        => Ok(await _mediator.Send(googleLoginCommandRequest));
-
-        [HttpPost("facebook-login")]
-        public async Task<IActionResult> FacebookLogin(FacebookLoginCommandRequest facebookLoginCommandRequest)
-       => Ok(await _mediator.Send(facebookLoginCommandRequest));
     }
 }

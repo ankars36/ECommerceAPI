@@ -1,13 +1,12 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Features.Commands.AppUser.CreateUser
+namespace ECommerceAPI.Application.DTOs.User
 {
-    public class CreateUserCommandRequest : IRequest<CreateUserCommandResponse>
+    public class CreateUser
     {
         public string NameSurname { get; set; }
         public string Username { get; set; }
