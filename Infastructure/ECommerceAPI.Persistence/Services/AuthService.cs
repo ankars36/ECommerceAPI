@@ -72,7 +72,7 @@ namespace ECommerceAPI.Persistence.Services
             FacebookAccessTokenResponse? facebookAccessTokenResponse = JsonSerializer.Deserialize<FacebookAccessTokenResponse>(accessTokenResponse);
 
 
-            string userAccessTokenValidation = await _httpClient.GetStringAsync($"https://graph.facebook.com/{authToken}/accounts?access_token={facebookAccessTokenResponse?.AccessToken}");
+            string userAccessTokenValidation = await _httpClient.GetStringAsync($"https://graph.facebook.com/debug_token?input_token={authToken}&access_token={facebookAccessTokenResponse?.AccessToken}");
             FacebookUserAccessTokenValidation? validation = JsonSerializer.Deserialize<FacebookUserAccessTokenValidation>(userAccessTokenValidation);
 
             if (validation?.Data.IsValid != null)

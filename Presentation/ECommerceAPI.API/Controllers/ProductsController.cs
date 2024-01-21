@@ -18,9 +18,9 @@ namespace ECommerceAPI.API.Controllers
     [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductsController : ControllerBase
     {
-        readonly Mediator _mediator;
+        readonly IMediator _mediator;
 
-        public ProductsController(Mediator mediator)
+        public ProductsController(IMediator mediator)
         {
             _mediator = mediator;
         }
