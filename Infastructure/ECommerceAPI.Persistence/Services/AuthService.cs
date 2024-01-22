@@ -10,6 +10,7 @@ using ECommerceAPI.Domain.Entities.Identity;
 using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -29,14 +30,16 @@ namespace ECommerceAPI.Persistence.Services
         readonly ITokenHandler _tokenHandler;
         readonly IConfiguration _configuration;
         readonly HttpClient _httpClient;
+        readonly IUserService _userService;
 
-        public AuthService(UserManager<AppUser> userManager, ITokenHandler tokenHandler, IConfiguration configuration, HttpClient httpClient, SignInManager<AppUser> signInManager)
+        public AuthService(UserManager<AppUser> userManager, ITokenHandler tokenHandler, IConfiguration configuration, HttpClient httpClient, SignInManager<AppUser> signInManager, IUserService userService)
         {
             _userManager = userManager;
             _tokenHandler = tokenHandler;
             _configuration = configuration;
             _httpClient = httpClient;
             _signInManager = signInManager;
+            _userService = userService;
         }
 
         async Task<Token> CreateUserExternalAsync(AppUser user, string email, string name, UserLoginInfo userLoginInfo, int accessTokenLifeTime)
@@ -63,7 +66,9 @@ namespace ECommerceAPI.Persistence.Services
                 else
                     throw new Exception("Invalid external authentication.");
             }
-            return _tokenHandler.CreateAccessToken(accessTokenLifeTime);
+            Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime);
+            await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 15);
+            return token;
         }
 
         public async Task<Token> FacebookLoginAsync(string authToken, int accessTokenLifeTime)
@@ -115,10 +120,24 @@ namespace ECommerceAPI.Persistence.Services
             SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
             if (result.Succeeded)
             {
-                return _tokenHandler.CreateAccessToken(accessTokenLifeTime);
+                Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 15);
+                return token;
             }
 
             throw new AuthenticationErrorException();
+        }
+
+        public async Task<Token> RefreshTokenLoginAsync(string refreshtoken, int accessTokenLifeTime)
+        {
+            AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshtoken);
+            if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
+            {
+                Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime);
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration, 15);
+                return token;
+            }
+            throw new NotFoundUserException();
         }
     }
 }
