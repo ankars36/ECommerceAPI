@@ -7,6 +7,7 @@ using ECommerceAPI.Infastructure.Filters;
 using ECommerceAPI.Infastructure.Services.Storage.Azure;
 using ECommerceAPI.Infastructure.Services.Storage.Local;
 using ECommerceAPI.Persistence;
+using ECommerceAPI.SignalR;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
@@ -23,12 +24,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddSignalRServices();
 
 //builder.Services.AddStorage<LocalStorage>();
 builder.Services.AddStorage<AzureStorage>();
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
-policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod()
+policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+.AllowAnyHeader()
+.AllowAnyMethod()
+.AllowCredentials()
 ));
 
 Logger log = new LoggerConfiguration()
@@ -38,7 +43,7 @@ Logger log = new LoggerConfiguration()
     needAutoCreateTable: true,
     columnOptions: new Dictionary<string, ColumnWriterBase>
     {
-        { "message",new RenderedMessageColumnWriter()},
+        {"message",new RenderedMessageColumnWriter()},
         {"message_template",new MessageTemplateColumnWriter() },
         {"level",new LevelColumnWriter() },
         {"time_stamp",new TimestampColumnWriter() },
@@ -117,5 +122,6 @@ app.Use(async (context, next) =>
 });
 
 app.MapControllers();
+app.MapHubs();
 
 app.Run();
