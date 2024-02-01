@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceAPI.Infastructure.Services
 {
-    public class MailService:IMailService
+    public class MailService : IMailService
     {
         readonly IConfiguration _configuration;
 
@@ -39,6 +39,20 @@ namespace ECommerceAPI.Infastructure.Services
             smtp.EnableSsl = true;
             smtp.Host = _configuration["Mail:Host"];
             await smtp.SendMailAsync(mail);
+        }
+
+        public async Task SendPasswordResetMailAsync(string to, string userId, string resetToken)
+        {
+            StringBuilder mail = new();
+            mail.AppendLine("Hello<br>If you have requested a new password, you can reset it using the link below.<br><strong><a target=\"_blank\" href=\"");
+            mail.AppendLine(_configuration["AngularClientUrl"]);
+            mail.AppendLine("/update-password/");
+            mail.AppendLine(userId);
+            mail.AppendLine("/");
+            mail.AppendLine(resetToken);
+            mail.AppendLine("\">Click here for a new password request...</a></strong><br><br><span style=\"font-size:12px;\">NOTE: If this request has not been made by you, please do not take this email seriously.</span><br> Regards...<br><br><br> - Deva E-Commerce");
+
+            await SendMailAsync(to, "Password Reset Request", mail.ToString());
         }
     }
 }
