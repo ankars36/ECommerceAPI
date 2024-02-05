@@ -1,4 +1,5 @@
-﻿using ECommerceAPI.Application.Features.Commands.Order.CreateOrder;
+﻿using ECommerceAPI.Application.Features.Commands.Order.CompleteOrder;
+using ECommerceAPI.Application.Features.Commands.Order.CreateOrder;
 using ECommerceAPI.Application.Features.Queries.Order.GetAllOrders;
 using ECommerceAPI.Application.Features.Queries.Order.GetOrderById;
 using MediatR;
@@ -25,10 +26,14 @@ namespace ECommerceAPI.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllOrders([FromQuery] GetAllOrdersQueryRequest getAllOrdersQueryRequest)
-       => Ok(await _mediator.Send(getAllOrdersQueryRequest));
+        => Ok(await _mediator.Send(getAllOrdersQueryRequest));
 
         [HttpGet("{Id}")]
         public async Task<ActionResult> GetOrderById([FromRoute] GetOrderByIdQueryRequest getOrderByIdQueryRequest)
         => Ok(await _mediator.Send(getOrderByIdQueryRequest));
+
+        [HttpGet("complete-order/{Id}")]
+        public async Task<ActionResult> CompleteOrder([FromRoute] CompleteOrderCommandRequest completeOrderCommandRequest)
+        => Ok(await _mediator.Send(completeOrderCommandRequest));
     }
 }
