@@ -1,4 +1,7 @@
-﻿using ECommerceAPI.Application.Features.Commands.Product.CreateProduct;
+﻿using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Enums;
+using ECommerceAPI.Application.Features.Commands.Product.CreateProduct;
 using ECommerceAPI.Application.Features.Commands.Product.RemoveProduct;
 using ECommerceAPI.Application.Features.Commands.Product.UpdateProduct;
 using ECommerceAPI.Application.Features.Commands.ProductImageFile.ChangeShowcaseImage;
@@ -35,8 +38,8 @@ namespace ECommerceAPI.API.Controllers
         => Ok(await _mediator.Send(getByIdProductQueryRequest));
 
         [HttpPost]
-
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Writing, Definition = "Create Product")]
         public async Task<IActionResult> Post([FromBody] CreateProductCommandRequest createProductCommandRequest)
         {
             CreateProductCommandResponse response = await _mediator.Send(createProductCommandRequest);
@@ -44,8 +47,8 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpPut]
-
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Updating, Definition = "Update Product")]
         public async Task<IActionResult> Put([FromBody] UpdateProductCommandRequest updateProductCommandRequest)
         {
             UpdateProductCommandResponse response = await _mediator.Send(updateProductCommandRequest);
@@ -53,8 +56,8 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpDelete("{Id}")]
-
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Deleting, Definition = "Delete Product")]
         public async Task<IActionResult> Delete([FromRoute] RemoveProductCommandRequest removeProductCommandRequest)
         {
             RemoveProductCommandResponse response = await _mediator.Send(removeProductCommandRequest);
@@ -62,8 +65,8 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpPost("[action]")]
-
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Writing, Definition = "Upload Product File")]
         public async Task<IActionResult> Upload([FromQuery] UploadProductImageCommandRequest uploadProductImageCommandRequest)
         {
             uploadProductImageCommandRequest.Files = Request.Form.Files;
@@ -73,12 +76,14 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpGet("[action]/{Id}")]
+        [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Reading, Definition = "Get Products Images")]
         public async Task<IActionResult> GetProductImages([FromRoute] GetProductImagesQueryRequest getProductImagesQueryRequest)
         => Ok(await _mediator.Send(getProductImagesQueryRequest));
 
         [HttpDelete("[action]/{Id}")]
-
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Deleting, Definition = "Delete Product Image")]
         public async Task<IActionResult> DeleteProductImages([FromRoute] RemoveProductImageCommandRequest removeProductImageCommand, [FromQuery] string imageId)
         {
             removeProductImageCommand.ImageId = imageId;
@@ -88,8 +93,8 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpGet("[action]")]
-
         [Authorize(AuthenticationSchemes = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = ActionType.Updating, Definition = "Change Showcase Image")]
         public async Task<IActionResult> ChangeShowcaseImage([FromQuery] ChangeShowcaseImageCommandRequest changeShowcaseImageCommand)
        => Ok(await _mediator.Send(changeShowcaseImageCommand));
     }
