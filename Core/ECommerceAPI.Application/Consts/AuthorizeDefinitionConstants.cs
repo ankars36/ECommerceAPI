@@ -13,5 +13,6 @@ namespace ECommerceAPI.Application.Consts
         public const string Products = "Products";
         public const string ApplicationServices = "ApplicationServices";
         public const string Roles = "Roles";
+        public const string Users = "Users";
     }
 }
