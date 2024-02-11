@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ECommerceAPI.Application.Abstractions;
-using ECommerceAPI.Persistence.Concretes;
 using ECommerceAPI.Persistence.Contexts;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -61,6 +60,7 @@ namespace ECommerceAPI.Persistence
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAuthorizationEndpointService, AuthorizationEndpointService>();
+            services.AddScoped<IProductService, ProductService>();
         }
     }
 }
